@@ -19,7 +19,7 @@ def salvar_eventos():
     posts = r.json['posts']
     for post in posts:
         evento = Evento(id=post['link'].split('/?events=')[1],
-                        titulo=post['titulo'],
+                        titulo=post['titulo_title'],
                         link=post['link'],
                         tipo_slug=post['tipo_slug'],
                         custo=post['custo'],

@@ -1,5 +1,7 @@
-from django.http import HttpResponse
+import logging
 
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
@@ -17,8 +19,7 @@ def salvar_eventos(request):
 
 
 def votar(request, evento):
-    print evento
-    nota_valor = request.GET.get('nota')
+    nota_valor = request.POST.get('nota')
     user = users.get_current_user()
     if not nota_valor:
         return HttpResponse('NOT OK')
@@ -38,3 +39,9 @@ def pegar_nota(request, evento):
     nota = ndb.Key(Nota, nota_id).get()
 
     return HttpResponse(nota.nota)
+
+
+def index(request, template='index.html'):
+    eventos = Evento.query().fetch(1000)
+    template_context = {'eventos': eventos}
+    return render_to_response(template, template_context)
