@@ -2,6 +2,7 @@ import logging
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from django.views.decorators.csrf import csrf_exempt
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
@@ -18,13 +19,14 @@ def salvar_eventos(request):
     return HttpResponse('OK')
 
 
+@csrf_exempt
 def votar(request, evento):
     nota_valor = request.POST.get('nota')
     user = users.get_current_user()
     if not nota_valor:
         return HttpResponse('NOT OK')
 
-    nota_valor = int(nota_valor)
+    nota_valor = int(nota_valor) + 1
     nota_id = NOTA_ID_FORMAT.format(evento, user.nickname())
     evento_key = ndb.Key(Evento, evento)
     nota = Nota(id=nota_id, user=user, nota=nota_valor, evento=evento_key)
@@ -38,7 +40,8 @@ def pegar_nota(request, evento):
     nota_id = NOTA_ID_FORMAT.format(evento, user.nickname())
     nota = ndb.Key(Nota, nota_id).get()
 
-    return HttpResponse(nota.nota)
+    nota = nota.nota if nota else ''
+    return HttpResponse(nota)
 
 
 def index(request, template='index.html'):

@@ -12,29 +12,39 @@ var preencher_estrelas = function($this, img, index){
     } else {
         img = 'media/img/star.gif'
     }
-    
     for(var j = 1; j < index + 1; j++){
       $this.parent().find('img:nth-child('+j+')').attr('src', img);   
     }
-    $this.attr('src', img); 
+    $this.attr('src', img);
 }
     
-var create_estrelas = function(){
-  var div_estrelas = jQuery('<div id="estrelas"></div>');
+var create_estrelas = function(qtdade){
+  var div_estrelas = jQuery('<div id="estrelas"></div>'),
+      gif_src = 'media/img/star.gif',
+      flag = false;
   
-  for (var i = 0; i < 5; i++){
-    var estrela = jQuery('<img class="star" src="media/img/star-empty.gif" />');
+  if (!qtdade){
+    qtdade = 5;
+    gif_src = 'media/img/star-empty.gif';
+    flag = true;
+  }
   
-    estrela.hover(
-      function() {
-        var index = jQuery(this).index();
-        preencher_estrelas(jQuery(this), 'cheio', index);
-      },
-      function(){
-        var index = jQuery(this).index();
-        preencher_estrelas(jQuery(this), 'vazio', index);
-      }
-    );
+  for (var i = 0; i < qtdade; i++){
+    var estrela = jQuery('<img class="star" src="'+gif_src+'" />');
+  
+    if (flag){
+        estrela.hover(
+          function() {
+            var index = jQuery(this).index();
+            preencher_estrelas(jQuery(this), 'cheio', index);
+          },
+          function(){
+            var index = jQuery(this).index();
+            preencher_estrelas(jQuery(this), 'vazio', index);
+          }
+        );
+    }
+    
     div_estrelas.append(estrela);
   }
   
@@ -44,9 +54,10 @@ var create_estrelas = function(){
 var make_vote = function() {
   jQuery('#estrelas .star').click(function(){
     var link = jQuery(this).parent().parent().find('a').attr('href'),
-        url = 'http://localhost:8080/votar/',
+        url = '/votar/',
         index = jQuery(this).index();
         
+    jQuery(this).parent().find('img.star').unbind('hover');
     function csrfSafeMethod(method) {
       // these HTTP methods do not require CSRF protection
       return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -62,8 +73,6 @@ var make_vote = function() {
     
     url = url + link.split('/?events=')[1] + '/';
     jQuery.post(url, {'nota': index}, function(data){
-      preencher_estrelas(jQuery(this), 'cheio', index);
-      jQuery(this).parent().find('img.star').unbind('hover');
     }).error(function(){
       console.log('error');
     });
@@ -73,6 +82,14 @@ var make_vote = function() {
 jQuery(document).ready(function(){
   set_style();
   
-  jQuery('li').append(create_estrelas());
-  make_vote();
+  jQuery('li').each(function(){
+      var link = jQuery(this).find('a').attr('href'),
+          url = '/pegar_nota/' + link.split('/?events=')[1] + '/',
+          $this_li = jQuery(this);
+      jQuery.get(url, function(data){
+          $this_li.append(create_estrelas(data));
+          if (!data)
+            make_vote();
+      });
+  });
 });

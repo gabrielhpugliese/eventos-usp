@@ -26,6 +26,5 @@ def salvar_eventos():
                         data_hora=datetime.strptime(post['data_hora'],
                                                     '%d-%m-%Y %H:%M'))
         evento.put()
-        break
 
     return posts
