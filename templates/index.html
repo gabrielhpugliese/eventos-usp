@@ -9,5 +9,12 @@
             </li>
         {% endfor %}
         </ul>
+        {% if eventos.has_previous %}
+            <a href="?page={{ eventos.previous_page_number }}">anterior</a>
+        {% endif %}
+        
+        {% if eventos.has_next %}
+            <a href="?page={{ eventos.next_page_number }}">próxima</a>
+        {% endif %}
     {% endif %}
 {%endblock%}

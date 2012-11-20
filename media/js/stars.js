@@ -29,6 +29,7 @@ var create_estrelas = function(qtdade){
     flag = true;
   }
   
+  
   for (var i = 0; i < qtdade; i++){
     var estrela = jQuery('<img class="star" src="'+gif_src+'" />');
   
@@ -44,7 +45,11 @@ var create_estrelas = function(qtdade){
           }
         );
     }
-    
+    div_estrelas.append(estrela);
+  }
+  
+  for (var i = 0; i < 5 - qtdade; i++){
+    var estrela = jQuery('<img class="star" src="media/img/star-empty.gif" />');
     div_estrelas.append(estrela);
   }
   

@@ -1,6 +1,6 @@
 cron:
-# - description: something something something
-#   url: /
-#   schedule: every 24 hours
+- description: scrape events
+  url: /salvar_eventos/
+  schedule: every 24 hours
 
 

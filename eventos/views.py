@@ -3,6 +3,7 @@ import logging
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
@@ -45,6 +46,19 @@ def pegar_nota(request, evento):
 
 
 def index(request, template='index.html'):
+    page = request.GET.get('page')
+
     eventos = Evento.query().fetch(1000)
+    paginator = Paginator(eventos, 10)
+
+    try:
+        eventos = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        eventos = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        eventos = paginator.page(paginator.num_pages)
+
     template_context = {'eventos': eventos}
     return render_to_response(template, template_context)
