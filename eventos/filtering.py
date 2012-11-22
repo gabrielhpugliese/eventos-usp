@@ -1,41 +1,40 @@
-from models import Nota
+def slope_one(my_user, my_voted_events, all_voted_events, grades_dct):
+    """ Returns recommendations through slope one method
 
+    Keyword arguments:
+    my_user -- user to recommend
+    my_voted_events -- events user already voted
+    all_voted_events -- events voted by everyone
+    grades_dct -- dict which key is user and value is a dict containing
+                  the event as key and grade as value
 
-def get_notas():
-    notas = Nota.query().filter().fetch(1000)
-    notas_dct = {}
-    for nota in notas:
-        if nota.user not in notas_dct:
-            notas_dct[nota.user] = {nota.evento: nota.nota}
-        else:
-            notas_dct[nota.user][nota.evento] = nota.nota
+    """
 
-    return notas_dct
+    recommendations = {}
+    my_non_voted_events = all_voted_events - my_voted_events
+    for non_voted_event_key in my_non_voted_events:
+        total_count = 0
+        total_summ = 0
+        for event_key in all_voted_events:
+            count = 0
+            summ = 0
+            for user in grades_dct.keys():
+                if user == my_user:
+                    continue
+                summ += (grades_dct[user][non_voted_event_key] -
+                         grades_dct[user][event_key])
+                count += 1
 
+            if count > 0:
+                try:
+                    summ = (summ + grades_dct[my_user][event_key]) * count
+                    total_summ += float(summ) / float(count)
+                    total_count += count
+                except KeyError:
+                    continue
 
-my_user = users.get_current_user()
-dct = get_notas()
-want = ndb.Key(Evento, 'abertas-as-inscricoes-para-o-primeiro-congresso-de-oncologia-clinica-da-fmrp')
-all_eventos = [evento.key for evento in Evento.query().fetch(1000)
-               if evento.key != want]
+        recommendations[non_voted_event_key] = int(float(total_summ) /
+                                                   float(total_count))
 
-total_count = 0
-total_summ = 0
-for evento_key in all_eventos:
-    count = 0
-    summ = 0
-    for user in dct.keys():
-        try:
-            summ += dct[user][want] - dct[user][evento_key]
-            count += 1
-        except KeyError:
-            continue
+    return recommendations
 
-    if count > 0:
-        try:
-            total_summ += float(summ) / float(count) + dct[my_user][evento_key] + count
-            total_count += count
-        except KeyError:
-            continue
-
-print total_summ, total_count, float(total_summ) / float(total_count)

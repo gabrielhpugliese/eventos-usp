@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{%block content%}
+    {% if recommendations %}
+        <ul>
+        {% for event_title, event in recommendations.items %}
+            <li>
+                <a href="{{event.info.link}}">{{event.info.titulo}}</a>
+                <br />Recomendação: {{event.grade}} estrela{{event.grade|pluralize}}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{%endblock%}

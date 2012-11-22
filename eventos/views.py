@@ -9,17 +9,31 @@ from google.appengine.ext import ndb
 
 import scrape
 import filtering
+import utils
 from models import Evento, Nota
 
 
 NOTA_ID_FORMAT = '{0}_{1}'
 
 
-def recomendar(request):
-    pass
+def recommend(request, template='recommendations.html'):
+    my_user = users.get_current_user()
+    grades = Nota.query().filter().fetch(1000)
+    grades_dct = utils.format_grades(grades)
+    my_voted_events = {grade.evento for grade
+                       in Nota.query(Nota.user == my_user).fetch(1000)}
+    all_voted_events = {grade.evento for grade in grades}
 
-#    template_context = {'eventos': eventos}
-#    return render_to_response(template, template_context)
+    filtered_events = filtering.slope_one(my_user, my_voted_events,
+                                          all_voted_events, grades_dct)
+
+    recommendations = {}
+    for event_key, grade in filtered_events.items():
+        event = event_key.get()
+        recommendations[event.titulo] = {'info': event, 'grade': grade}
+
+    template_context = {'recommendations': recommendations}
+    return render_to_response(template, template_context)
 
 
 def salvar_eventos(request):
