@@ -8,10 +8,18 @@ from google.appengine.api import users
 from google.appengine.ext import ndb
 
 import scrape
+import filtering
 from models import Evento, Nota
 
 
 NOTA_ID_FORMAT = '{0}_{1}'
+
+
+def recomendar(request):
+    pass
+
+#    template_context = {'eventos': eventos}
+#    return render_to_response(template, template_context)
 
 
 def salvar_eventos(request):
