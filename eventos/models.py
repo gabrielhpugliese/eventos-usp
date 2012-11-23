@@ -4,17 +4,17 @@ GRADE_ID_FORMAT = '{0}_{1}'
 
 
 class Event(ndb.Model):
-    titulo = ndb.StringProperty()
+    title = ndb.StringProperty()
     link = ndb.StringProperty()
-    tipo_slug = ndb.StringProperty()
-    custo = ndb.StringProperty()
-    data_hora = ndb.DateTimeProperty()
+    slug = ndb.StringProperty()
+    cost = ndb.StringProperty()
+    date_time = ndb.DateTimeProperty()
 
 
 class Grade(ndb.Model):
-    evento = ndb.KeyProperty()
+    event = ndb.KeyProperty()
     user = ndb.UserProperty()
-    nota = ndb.IntegerProperty()
+    value = ndb.IntegerProperty()
 
 
 class EventFacade(object):
@@ -25,11 +25,11 @@ class EventFacade(object):
     @staticmethod
     def save_event(event_id, title, link, slug, cost, date_time):
         event = Event(id=event_id,
-                       titulo=title,
+                       title=title,
                        link=link,
-                       tipo_slug=slug,
-                       custo=cost,
-                       data_hora=date_time)
+                       slug=slug,
+                       cost=cost,
+                       date_time=date_time)
         event.put()
 
 
@@ -44,7 +44,7 @@ class GradeFacade(object):
         grade = Grade.get_by_id(grade_id, parent=None)
 
         if grade:
-            return grade.nota
+            return grade.value
 
     @staticmethod
     def get_all_grades():
@@ -58,6 +58,6 @@ class GradeFacade(object):
     def save_grade(an_user, grade_value, event):
         grade_id = format_grade_id(event, an_user.nickname())
         event_key = ndb.Key(Event, event)
-        grade = Grade(id=grade_id, user=an_user, nota=grade_value,
-                     evento=event_key)
+        grade = Grade(id=grade_id, user=an_user, value=grade_value,
+                      event=event_key)
         grade.put()

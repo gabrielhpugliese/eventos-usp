@@ -3,18 +3,18 @@
 {% block javascripts %}
 <script type="text/javascript">
     jQuery(document).ready(function(){
-      set_style();
+        set_style();
       
-      jQuery('li').each(function(){
-          var link = jQuery(this).find('a').attr('href'),
-              url = '/show_grade/' + link.split('/?events=')[1] + '/',
-              $this_li = jQuery(this);
-          jQuery.get(url, function(data){
-              $this_li.append(create_stars(data['value']));
-              if (!data['value'])
-                  enable_click_for_vote($this_li);
-          });
-      });
+        jQuery('li').each(function(){
+            var link = jQuery(this).find('a').attr('href'),
+                url = '/show_grade/' + link.split('/?events=')[1] + '/',
+                $this_li = jQuery(this);
+            jQuery.get(url, function(data){
+                $this_li.append(create_stars(data['value']));
+                if (!data['value'])
+                    enable_click_for_vote($this_li);
+            });
+        });
     });
 </script>
 {% endblock %}
@@ -24,7 +24,7 @@
         <ul>
         {% for event in events %}
             <li>
-                <a href="{{event.link}}">{{event.titulo}}</a>
+                <a href="{{event.link}}">{{event.title}}</a>
             </li>
         {% endfor %}
         </ul>

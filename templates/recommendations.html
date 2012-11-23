@@ -5,7 +5,7 @@
         <ul>
         {% for event_title, event in recommendations.items %}
             <li>
-                <a href="{{event.info.link}}">{{event.info.titulo}}</a>
+                <a href="{{event.info.link}}">{{event_title}}</a>
                 <br />Recomendação: {{event.grade}} estrela{{event.grade|pluralize}}
             </li>
         {% endfor %}
