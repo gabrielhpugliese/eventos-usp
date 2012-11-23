@@ -22,9 +22,10 @@ def recommend(request, template='recommendations.html'):
     my_user = users.get_current_user()
     grades = GradeFacade.get_all_grades()
     grades_dct = utils.format_grades(grades)
-    my_voted_events = {grade.evento for grade
+    my_voted_events = {grade.event for grade
                        in GradeFacade.get_grades_from_user(my_user)}
-    all_voted_events = {grade.evento for grade in grades}
+    all_voted_events = {grade.event for grade in grades
+                        if grade.user != my_user}
 
     filtered_events = filtering.slope_one(my_user, my_voted_events,
                                           all_voted_events, grades_dct)
@@ -32,7 +33,7 @@ def recommend(request, template='recommendations.html'):
     recommendations = {}
     for event_key, grade in filtered_events.items():
         event = event_key.get()
-        recommendations[event.titulo] = {'info': event, 'grade': grade}
+        recommendations[event.title] = {'info': event, 'grade': grade}
 
     template_context = {'recommendations': recommendations}
     return render_to_response(template, template_context)

@@ -22,7 +22,8 @@ class Grade(ndb.Model):
 class EventFacade(object):
     @staticmethod
     def get_all_events_ordered_since_today():
-        return Event.query().filter(Event.date_time >= datetime.now()).order(Event.date_time).fetch(1000)
+        query = Event.query().filter(Event.date_time >= datetime.now())
+        return query.order(Event.date_time).fetch(1000)
 
     @staticmethod
     def save_event(event_id, title, link, slug, cost, date_time):

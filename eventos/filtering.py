@@ -33,8 +33,9 @@ def slope_one(my_user, my_voted_events, all_voted_events, grades_dct):
                 except KeyError:
                     continue
 
-        recommendations[non_voted_event_key] = int(float(total_summ) /
-                                                   float(total_count))
+        if total_count > 0:
+            recommendations[non_voted_event_key] = int(float(total_summ) /
+                                                       float(total_count))
 
     return recommendations
 
