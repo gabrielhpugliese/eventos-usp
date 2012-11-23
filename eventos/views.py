@@ -78,7 +78,8 @@ def show_grade(request, event):
 def index(request, template='index.html'):
     page = request.GET.get('page')
 
-    events = EventFacade.get_all_events()
+    events = EventFacade.get_all_events_ordered_since_today()
+    events_len = len(events)
     paginator = Paginator(events, 10)
 
     try:
@@ -90,5 +91,5 @@ def index(request, template='index.html'):
         # If page is out of range (e.g. 9999), deliver last page of results.
         events = paginator.page(paginator.num_pages)
 
-    template_context = {'events': events}
+    template_context = {'events': events, 'events_len': events_len}
     return render_to_response(template, template_context)

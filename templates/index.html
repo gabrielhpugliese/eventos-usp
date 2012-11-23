@@ -20,20 +20,24 @@
 {% endblock %}
 
 {%block content%}
+    <p><a href="{% url save_events %}">Salvar eventos no BD</a></p>
+    <p><a href="{% url recommend %}">Me recomende eventos</a></p>
     {% if events %}
+        <h2>{{ events_len }} eventos a partir de {% now "DATE_FORMAT" %}</h2>
         <ul>
         {% for event in events %}
             <li>
                 <a href="{{event.link}}">{{event.title}}</a>
+                <br />{{event.date_time}}
             </li>
         {% endfor %}
         </ul>
         {% if events.has_previous %}
-            <a href="?page={{ events.previous_page_number }}">anterior</a>
+            <a href="?page={{ events.previous_page_number }}">anterior<<</a>
         {% endif %}
         
         {% if events.has_next %}
-            <a href="?page={{ events.next_page_number }}">próxima</a>
+            <a href="?page={{ events.next_page_number }}">>> próxima</a>
         {% endif %}
     {% endif %}
 {%endblock%}
