@@ -1,20 +1,39 @@
 {% extends 'base.html' %}
 
+{% block javascripts %}
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+      set_style();
+      
+      jQuery('li').each(function(){
+          var link = jQuery(this).find('a').attr('href'),
+              url = '/show_grade/' + link.split('/?events=')[1] + '/',
+              $this_li = jQuery(this);
+          jQuery.get(url, function(data){
+              $this_li.append(create_stars(data['value']));
+              if (!data['value'])
+                  enable_click_for_vote($this_li);
+          });
+      });
+    });
+</script>
+{% endblock %}
+
 {%block content%}
-    {% if eventos %}
+    {% if events %}
         <ul>
-        {% for evento in eventos %}
+        {% for event in events %}
             <li>
-                <a href="{{evento.link}}">{{evento.titulo}}</a>
+                <a href="{{event.link}}">{{event.titulo}}</a>
             </li>
         {% endfor %}
         </ul>
-        {% if eventos.has_previous %}
-            <a href="?page={{ eventos.previous_page_number }}">anterior</a>
+        {% if events.has_previous %}
+            <a href="?page={{ events.previous_page_number }}">anterior</a>
         {% endif %}
         
-        {% if eventos.has_next %}
-            <a href="?page={{ eventos.next_page_number }}">próxima</a>
+        {% if events.has_next %}
+            <a href="?page={{ events.next_page_number }}">próxima</a>
         {% endif %}
     {% endif %}
 {%endblock%}

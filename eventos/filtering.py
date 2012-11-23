@@ -3,10 +3,10 @@ def slope_one(my_user, my_voted_events, all_voted_events, grades_dct):
 
     Keyword arguments:
     my_user -- user to recommend
-    my_voted_events -- events user already voted
-    all_voted_events -- events voted by everyone
-    grades_dct -- dict which key is user and value is a dict containing
-                  the event as key and grade as value
+    my_voted_events (set) -- events user already voted
+    all_voted_events (set) -- events voted by everyone
+    grades_dct (dict) -- dict which key is user and value is a dict containing
+                         the event as key and grade as value
 
     """
 

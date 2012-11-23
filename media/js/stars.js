@@ -1,100 +1,72 @@
-var set_style = function(){
-  var style;
-  style = '<style type="text/css">\n';
-  style += 'img.star{ cursor: pointer; }';
-  style += '\n</style>';
-  jQuery('head').append(style);
+var STAR_EMPTY_SRC = 'media/img/star-empty.gif', 
+    STAR_EMPTY_IMG = '<img class="star" src="' + STAR_EMPTY_SRC + '" />', 
+    STAR_SRC = 'media/img/star.gif', 
+    STAR_IMG = '<img class="star" src="' + STAR_SRC + '" />';
+
+var set_style = function() {
+    var style;
+    style = '<style type="text/css">\n';
+    style += 'img.star{ cursor: pointer; }';
+    style += '\n</style>';
+    jQuery('head').append(style);
 };
 
-var preencher_estrelas = function($this, img, index){
-    if (img == 'vazio'){
-        img = 'media/img/star-empty.gif'
-    } else {
-        img = 'media/img/star.gif'
+var fill_stars = function($this, img, index) {
+    var star_src = img == 'empty' ? STAR_EMPTY_SRC : STAR_SRC;
+    for (var j = 1; j < index + 2; j++) {
+        $this.parent().find('img:nth-child(' + j + ')').attr('src', star_src);
     }
-    for(var j = 1; j < index + 1; j++){
-      $this.parent().find('img:nth-child('+j+')').attr('src', img);   
-    }
-    $this.attr('src', img);
 }
-    
-var create_estrelas = function(qtdade){
-  var div_estrelas = jQuery('<div id="estrelas"></div>'),
-      gif_src = 'media/img/star.gif',
-      flag = false;
-  
-  if (!qtdade){
-    qtdade = 5;
-    gif_src = 'media/img/star-empty.gif';
-    flag = true;
-  }
-  
-  
-  for (var i = 0; i < qtdade; i++){
-    var estrela = jQuery('<img class="star" src="'+gif_src+'" />');
-  
-    if (flag){
-        estrela.hover(
-          function() {
-            var index = jQuery(this).index();
-            preencher_estrelas(jQuery(this), 'cheio', index);
-          },
-          function(){
-            var index = jQuery(this).index();
-            preencher_estrelas(jQuery(this), 'vazio', index);
-          }
-        );
-    }
-    div_estrelas.append(estrela);
-  }
-  
-  for (var i = 0; i < 5 - qtdade; i++){
-    var estrela = jQuery('<img class="star" src="media/img/star-empty.gif" />');
-    div_estrelas.append(estrela);
-  }
-  
-  return div_estrelas;
-};
+var create_stars = function(quantity) {
+    var $div_stars = jQuery('<div id="stars"></div>'), 
+        gif_img = STAR_IMG,  
+        enable_hover = false;
 
-var make_vote = function() {
-  jQuery('#estrelas .star').click(function(){
-    var link = jQuery(this).parent().parent().find('a').attr('href'),
-        url = '/votar/',
-        index = jQuery(this).index();
-        
-    jQuery(this).parent().find('img.star').unbind('hover');
-    function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    if (!quantity) {
+        quantity = 5;
+        gif_img = STAR_EMPTY_IMG;
+        enable_hover = true;
     }
-    jQuery.ajaxSetup({
-      crossDomain: false, // obviates need for sameOrigin test
-      beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-          xhr.setRequestHeader('X-CSRFToken', jQuery.cookie('csrftoken'));
+
+    for (var i = 0; i < quantity; i++) {
+        var $star_img = jQuery(gif_img);
+
+        if (enable_hover) {
+            $star_img.hover(function() {
+                var $self = jQuery(this),
+                    index = $self.index();
+                fill_stars($self, 'full', index);
+            }, function() {
+                var $self = jQuery(this),
+                    index = $self.index();
+                fill_stars($self, 'empty', index);
+            });
         }
-      }
+        $div_stars.append($star_img);
+    }
+
+    for (var i = 0; i < 5 - quantity; i++) {
+        var $star_img = jQuery(STAR_EMPTY_IMG);
+        $div_stars.append($star_img);
+    }
+
+    return $div_stars;
+};
+
+var enable_click_for_vote = function($this_li) {
+    $this_li.find('.star').click(function() {
+        var $self = jQuery(this),
+            link = $self.parent().parent().find('a').attr('href'), 
+            url = '/vote/' + link.split('/?events=')[1] + '/', 
+            index = $self.index();
+
+
+        jQuery.post(url, {
+            'grade' : index
+        }, function(data) {
+            $self.parent().find('img.star').unbind('hover');
+            fill_stars($self, 'fill', index);
+        });
     });
-    
-    url = url + link.split('/?events=')[1] + '/';
-    jQuery.post(url, {'nota': index}, function(data){
-    }).error(function(){
-      console.log('error');
-    });
-  });
 }
 
-jQuery(document).ready(function(){
-  set_style();
-  
-  jQuery('li').each(function(){
-      var link = jQuery(this).find('a').attr('href'),
-          url = '/pegar_nota/' + link.split('/?events=')[1] + '/',
-          $this_li = jQuery(this);
-      jQuery.get(url, function(data){
-          $this_li.append(create_estrelas(data));
-          if (!data)
-            make_vote();
-      });
-  });
-});

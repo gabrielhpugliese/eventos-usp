@@ -1,9 +1,9 @@
 from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('',
-    url(r'^salvar_eventos/$', 'eventos.views.salvar_eventos'),
-    url(r'^votar/(?P<evento>.+)/$', 'eventos.views.votar'),
-    url(r'^pegar_nota/(?P<evento>.+)/$', 'eventos.views.pegar_nota'),
+    url(r'^save_events/$', 'eventos.views.save_events'),
+    url(r'^vote/(?P<event>.+)/$', 'eventos.views.vote'),
+    url(r'^show_grade/(?P<event>.+)/$', 'eventos.views.show_grade'),
     url(r'^recommend/$', 'eventos.views.recommend'),
     url(r'^$', 'eventos.views.index'),
 )

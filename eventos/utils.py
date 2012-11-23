@@ -1,6 +1,3 @@
-from models import Evento, Nota
-
-
 def format_grades(grades):
     grades_dct = {}
     for grade in grades:

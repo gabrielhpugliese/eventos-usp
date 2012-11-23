@@ -3,10 +3,12 @@ from datetime import datetime
 import requests
 from django.conf import settings
 
-from eventos.models import Evento
+from eventos.models import EventFacade
 
 
-def salvar_eventos():
+def save_events_on_db():
+    ''' Scrapes the events from json and save them on db. '''
+
     data = {'action': 'aeh_show_ajax',
             'aeh_search_custo': 'todos',
             'aeh_search_campi': 'todos',
@@ -18,13 +20,14 @@ def salvar_eventos():
 
     posts = r.json['posts']
     for post in posts:
-        evento = Evento(id=post['link'].split('/?events=')[1],
-                        titulo=post['titulo_title'],
-                        link=post['link'],
-                        tipo_slug=post['tipo_slug'],
-                        custo=post['custo'],
-                        data_hora=datetime.strptime(post['data_hora'],
-                                                    '%d-%m-%Y %H:%M'))
-        evento.put()
+        post_id = post['link'].split('/?events=')[1]
+        date_time = datetime.strptime(post['data_hora'], '%d-%m-%Y %H:%M')
+
+        EventFacade.save_event(post_id,
+                               post['titulo_title'],
+                               post['link'],
+                               post['tipo_slug'],
+                               post['custo'],
+                               date_time)
 
     return posts
