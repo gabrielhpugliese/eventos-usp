@@ -1,6 +1,6 @@
 cron:
 - description: scrape events
-  url: /salvar_eventos/
+  url: /save_events/
   schedule: every 24 hours
 
 
