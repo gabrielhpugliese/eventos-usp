@@ -19,7 +19,7 @@ handlers:
   static_files: robots.txt
   upload: robots.txt
 
-- url: /salvar_eventos.*
+- url: /save_events.*
   script: main.application
   login: admin
 
