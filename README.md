@@ -1,5 +1,10 @@
-Scraper for USP events
+Recommender for USP events
 ===================
+
+Authors:
+
+* Gabriel Henrique Pugliese - 5639061 *
+* Paulo Cheadi Haddad Filho - 5210744 *
 
 This is a scraper and recommender for events in University Of São Paulo' events page: http://www.eventos.usp.br/ - It recommends based on other users recommendations and simple Slope One algorithm in [eventos/filtering.py](https://github.com/gabrielhpugliese/eventos-usp/blob/master/eventos/filtering.py)
 
